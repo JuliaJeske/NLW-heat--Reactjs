@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
 
-
 type User = {
   id: string;
   name: string;
@@ -34,16 +33,17 @@ type AuthResponse = {
 export function AuthProvider(props: AuthProvider) {
   const [user, setUser] = useState<User | null>(null)
 
-  const signInUrl = `https://github.com/login/oauth/authorize?client_id=7bd0d2a541805aa358cc`;
+  const signInUrl = `https://github.com/login/oauth/authorize?scope=user&client_id=7bd0d2a541805aa358cc`;
 
   async function signIn(githubCode: string) {
     const response = await api.post<AuthResponse>('authenticate', {
-      code: githubCode
+      code: githubCode,
     })
 
     const { token, user } = response.data
+    
 
-    localStorage.setItem('@dowhile:token', token)
+    localStorage.setItem('@dowhile:token', token) //token salvo no storage do navegador
 
     api.defaults.headers.common.authorization = `Bearer ${token}`;
 
@@ -85,4 +85,8 @@ export function AuthProvider(props: AuthProvider) {
       {props.children}
     </AuthContext.Provider>
   );
+}
+
+function data(data: any) {
+  throw new Error("Function not implemented.");
 }
